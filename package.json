@@ -6,5 +6,9 @@
   "repository": "https://github.com/runjak/aoc-2019",
   "author": "Jakob Runge <sicarius@g4t3.de>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.2"
+  }
 }
