@@ -1,5 +1,12 @@
 import input from "./02.input.json";
-import { add, multiply, execute, setup } from "./02";
+import {
+  add,
+  multiply,
+  execute,
+  setup,
+  setupSignature,
+  seekSetupParameters
+} from "./02";
 
 describe("02", () => {
   describe("add()", () => {
@@ -99,6 +106,27 @@ describe("02", () => {
       const result = execute(setup(input), 0)[0];
 
       expect(result).not.toBe(wrong);
+    });
+  });
+
+  describe("setupSignature()", () => {
+    it("should calculate the example signature", () => {
+      const expected = 1202;
+      const actual = setupSignature({ noun: 12, verb: 2 });
+
+      expect(actual).toBe(expected);
+    });
+  });
+
+  describe("seekSetupParameters()", () => {
+    it("should find the setup parameters for the given addition", () => {
+      const program = [1, 0, 0, 0, 99];
+      const desired = 99;
+
+      const expected = { noun: 3, verb: 4 };
+      const actual = seekSetupParameters(program, desired);
+
+      expect(actual).toEqual(expected);
     });
   });
 });

@@ -51,16 +51,50 @@ export function execute(program: IntProgram, pc: ProgramPointer): IntProgram {
   }
 }
 
-export function setup(program: IntProgram): IntProgram {
+export function setup(
+  program: IntProgram,
+  noun: number = 12,
+  verb: number = 2
+): IntProgram {
   const copy = [...program];
-  copy[1] = 12;
-  copy[2] = 2;
+  copy[1] = noun;
+  copy[2] = verb;
 
   return copy;
 }
 
-function solution() {
-  console.log(`02-1: ${execute(setup(input), 0)[0]}`);
+type SetupParameters = { noun: number; verb: number };
+
+export function setupSignature({ noun, verb }: SetupParameters): number {
+  return 100 * noun + verb;
 }
 
-solution();
+const desired = 19690720;
+
+export function seekSetupParameters(
+  program: IntProgram,
+  desired: number
+): SetupParameters | null {
+  for (let noun = 1; noun < 99; noun++) {
+    for (let verb = 1; verb < 99; verb++) {
+      const result = execute(setup(program, noun, verb), 0)[0];
+
+      if (result === desired) {
+        return { noun, verb };
+      }
+    }
+  }
+
+  return null;
+}
+
+function solution() {
+  console.log(`02-1: ${execute(setup(input), 0)[0]}`);
+
+  const setupParameters = seekSetupParameters(input, desired);
+  if (setupParameters) {
+    console.log(`02-2: ${setupSignature(setupParameters)}`);
+  } else {
+    console.log("02-2: no solution found");
+  }
+}
