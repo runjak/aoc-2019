@@ -6,9 +6,14 @@ import {
   manhattenDistance,
   chainVectors,
   lineIntersection,
+  lines,
   findIntersections,
-  findClosestIntersectionDistance
+  findClosestIntersectionDistance,
+  stepsToIntersection,
+  findShortestStepSumIntersection
 } from "./03";
+
+import input from "./03.input.json";
 
 describe("03", () => {
   describe("parseSegment()", () => {
@@ -107,6 +112,25 @@ describe("03", () => {
     });
   });
 
+  describe("lines()", () => {
+    it("should give the lines from a chain of vectors", () => {
+      const chain = [
+        vec2.fromValues(0, 1),
+        vec2.fromValues(1, 1),
+        vec2.fromValues(1, 3)
+      ];
+
+      const expected = [
+        [vec2.fromValues(0, 0), chain[0]],
+        [chain[0], chain[1]],
+        [chain[1], chain[2]]
+      ];
+      const actual = lines(chain);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe("findIntersections()", () => {
     it("should find the intersections from example 1", () => {
       const s1 = "R8,U5,L5,D3";
@@ -179,6 +203,76 @@ describe("03", () => {
       const actual = findClosestIntersectionDistance(s1, s2);
 
       expect(actual).toBe(expected);
+    });
+  });
+
+  describe("stepsToIntersection()", () => {
+    it("compute the correct number of steps for the line with intersection", () => {
+      const lines = [[vec2.fromValues(0, 0), vec2.fromValues(0, 5)]];
+      const intersection = vec2.fromValues(0, 3);
+
+      expect(stepsToIntersection(lines, intersection)).toBe(3);
+    });
+
+    it("should compute the sum of line lengths for an unreached intersection", () => {
+      const lines = [
+        [vec2.fromValues(0, 0), vec2.fromValues(0, 5)],
+        [vec2.fromValues(0, 5), vec2.fromValues(0, 7)],
+        [vec2.fromValues(0, 7), vec2.fromValues(0, 11)]
+      ];
+      const intersection = vec2.fromValues(1, 1);
+
+      expect(stepsToIntersection(lines, intersection)).toBe(11);
+    });
+
+    it("should correctly handle the combined case", () => {
+      const lines = [
+        [vec2.fromValues(0, 0), vec2.fromValues(0, 5)],
+        [vec2.fromValues(0, 5), vec2.fromValues(0, 7)],
+        [vec2.fromValues(0, 7), vec2.fromValues(0, 11)]
+      ];
+      const intersection = vec2.fromValues(0, 9);
+
+      expect(stepsToIntersection(lines, intersection)).toBe(9);
+    });
+  });
+
+  describe("findShortestStepSumIntersection()", () => {
+    it("should correctly compute example 1", () => {
+      const s1 = "R8,U5,L5,D3";
+      const s2 = "U7,R6,D4,L4";
+
+      const expected = 30;
+      const actual = findShortestStepSumIntersection(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+
+    it("should correctly compute example 2", () => {
+      const s1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
+      const s2 = "U62,R66,U55,R34,D71,R55,D58,R83";
+
+      const expected = 610;
+      const actual = findShortestStepSumIntersection(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+
+    it("should correctly compute example 3", () => {
+      const s1 = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
+      const s2 = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
+
+      const expected = 410;
+      const actual = findShortestStepSumIntersection(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+
+    it("should not be too small", () => {
+      const lowerBound = 678;
+      const actual = findShortestStepSumIntersection(input[0], input[1]);
+
+      expect(actual).toBeGreaterThan(lowerBound);
     });
   });
 });

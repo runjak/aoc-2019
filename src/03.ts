@@ -93,17 +93,14 @@ export function lineIntersection([p0, p1]: Line, [p2, p3]: Line): vec2 | null {
   );
 }
 
-function lines(vecs: Array<vec2>): Array<Line> {
+export function lines(vecs: Array<vec2>): Array<Line> {
   return vecs.map((v, i) => (i === 0 ? [origin, v] : [vecs[i - 1], v]));
 }
 
-export function findIntersections(s1: string, s2: string): Array<vec2> {
-  const vs1 = chainVectors(parseSegments(s1).map(segmentToVector));
-  const vs2 = chainVectors(parseSegments(s2).map(segmentToVector));
-
-  const ls1 = lines(vs1);
-  const ls2 = lines(vs2);
-
+function findIntersectionsForLines(
+  ls1: Array<Line>,
+  ls2: Array<Line>
+): Array<vec2> {
   const intersections: Array<vec2> = [];
 
   ls1.forEach(l1 => {
@@ -119,6 +116,13 @@ export function findIntersections(s1: string, s2: string): Array<vec2> {
   return intersections;
 }
 
+export function findIntersections(s1: string, s2: string): Array<vec2> {
+  const ls1 = lines(chainVectors(parseSegments(s1).map(segmentToVector)));
+  const ls2 = lines(chainVectors(parseSegments(s2).map(segmentToVector)));
+
+  return findIntersectionsForLines(ls1, ls2);
+}
+
 export function findClosestIntersectionDistance(
   s1: string,
   s2: string
@@ -126,8 +130,48 @@ export function findClosestIntersectionDistance(
   return Math.min(...findIntersections(s1, s2).map(manhattenDistance));
 }
 
-function solution() {
-  console.log(`03-1: ${findClosestIntersectionDistance(input[0], input[1])}`);
+export function stepsToIntersection(
+  lines: Array<Line>,
+  intersection: vec2
+): number {
+  let steps = 0;
+
+  for (const line of lines) {
+    const [x, y] = line;
+    const intersectionOnLine =
+      x[0] === intersection[0] || x[1] === intersection[1];
+
+    if (intersectionOnLine) {
+      steps += vec2.distance(x, intersection);
+      break;
+    }
+
+    steps += vec2.distance(x, y);
+  }
+
+  return steps;
 }
 
-solution();
+export function findShortestStepSumIntersection(
+  s1: string,
+  s2: string
+): number {
+  const ls1 = lines(chainVectors(parseSegments(s1).map(segmentToVector)));
+  const ls2 = lines(chainVectors(parseSegments(s2).map(segmentToVector)));
+
+  return Math.min(
+    ...findIntersectionsForLines(ls1, ls2).map((intersection: vec2): number => {
+      return (
+        stepsToIntersection(ls1, intersection) +
+        stepsToIntersection(ls2, intersection)
+      );
+    })
+  );
+}
+
+function solution() {
+  console.log(`03-1: ${findClosestIntersectionDistance(input[0], input[1])}`);
+  console.log(`03-2: ${findShortestStepSumIntersection(input[0], input[1])}`);
+}
+
+// solution();
