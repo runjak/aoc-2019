@@ -1,0 +1,184 @@
+import { vec2 } from "gl-matrix";
+import {
+  parseSegment,
+  parseSegments,
+  segmentToVector,
+  manhattenDistance,
+  chainVectors,
+  lineIntersection,
+  findIntersections,
+  findClosestIntersectionDistance
+} from "./03";
+
+describe("03", () => {
+  describe("parseSegment()", () => {
+    it("should parse a valid segment", () => {
+      const data = "U42";
+      const expected = { direction: "U", length: 42 };
+
+      const actual = parseSegment(data);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should throw on invalid segments", () => {
+      expect(() => parseSegment("")).toThrow();
+    });
+  });
+
+  describe("parseSegments()", () => {
+    it("should correctly parse a list of segments", () => {
+      const data = "R8,U5";
+      const expected = [
+        { direction: "R", length: 8 },
+        { direction: "U", length: 5 }
+      ];
+
+      const actual = parseSegments(data);
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("segmentToVector", () => {
+    it("should calculate the expected vectors", () => {
+      const segments = parseSegments("R8,U5,L5,D3");
+      const expected = [
+        vec2.fromValues(8, 0),
+        vec2.fromValues(0, 5),
+        vec2.fromValues(-5, 0),
+        vec2.fromValues(0, -3)
+      ];
+
+      const actual = segments.map(segmentToVector);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("manhattenDistance()", () => {
+    it("should calculate the expected distance", () => {
+      const vec = vec2.fromValues(-3, 3);
+      const expected = 6;
+
+      expect(manhattenDistance(vec)).toBe(expected);
+    });
+  });
+
+  describe("chainVectors()", () => {
+    it("should calculate the expected absolute vectors", () => {
+      const input = [
+        vec2.fromValues(1, 0),
+        vec2.fromValues(0, -3),
+        vec2.fromValues(-2, 5)
+      ];
+      const expected = [
+        vec2.fromValues(1, 0),
+        vec2.fromValues(1, -3),
+        vec2.fromValues(-1, 2)
+      ];
+
+      expect(chainVectors(input)).toEqual(expected);
+    });
+  });
+
+  describe("lineIntersection()", () => {
+    it("should return null when lines are parallel", () => {
+      const l1 = [vec2.fromValues(0, 1), vec2.fromValues(1, 1)];
+      const l2 = [vec2.fromValues(0, 2), vec2.fromValues(1, 2)];
+
+      expect(lineIntersection(l1, l2)).toBeNull();
+    });
+
+    it("should return the intersection points for orthogonally intersecting lines", () => {
+      const l1 = [vec2.fromValues(0, -1), vec2.fromValues(0, 2)];
+      const l2 = [vec2.fromValues(-1, 1), vec2.fromValues(2, 1)];
+
+      const expected = vec2.fromValues(0, 1);
+      const actual = lineIntersection(l1, l2);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should not find an invalid example", () => {
+      const l1 = [vec2.fromValues(0, 0), vec2.fromValues(8, 0)];
+      const l2 = [vec2.fromValues(6, 7), vec2.fromValues(6, 3)];
+
+      expect(lineIntersection(l1, l2)).toBeNull();
+    });
+  });
+
+  describe("findIntersections()", () => {
+    it("should find the intersections from example 1", () => {
+      const s1 = "R8,U5,L5,D3";
+      const s2 = "U7,R6,D4,L4";
+
+      const expected = [vec2.fromValues(6, 5), vec2.fromValues(3, 3)];
+      const actual = findIntersections(s1, s2);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should find the intersections from example 2", () => {
+      const s1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
+      const s2 = "U62,R66,U55,R34,D71,R55,D58,R83";
+
+      const expected = [
+        vec2.fromValues(158, -12),
+        vec2.fromValues(146, 46),
+        vec2.fromValues(155, 4),
+        vec2.fromValues(155, 11)
+      ];
+      const actual = findIntersections(s1, s2);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should find the intersections from example 3", () => {
+      const s1 = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
+      const s2 = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
+
+      const expected = [
+        vec2.fromValues(107, 47),
+        vec2.fromValues(124, 11),
+        vec2.fromValues(157, 18),
+        vec2.fromValues(107, 71),
+        vec2.fromValues(107, 51)
+      ];
+      const actual = findIntersections(s1, s2);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("findClosestIntersectionDistance()", () => {
+    it("should produce the solution for example 1", () => {
+      const s1 = "R8,U5,L5,D3";
+      const s2 = "U7,R6,D4,L4";
+
+      const expected = 6;
+      const actual = findClosestIntersectionDistance(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+
+    it("should produce the solution for example 2", () => {
+      const s1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
+      const s2 = "U62,R66,U55,R34,D71,R55,D58,R83";
+
+      const expected = 159;
+      const actual = findClosestIntersectionDistance(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+
+    it("should produce the solution for example 3", () => {
+      const s1 = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
+      const s2 = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
+
+      const expected = 135;
+      const actual = findClosestIntersectionDistance(s1, s2);
+
+      expect(actual).toBe(expected);
+    });
+  });
+});
