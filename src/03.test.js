@@ -235,6 +235,20 @@ describe("03", () => {
 
       expect(stepsToIntersection(lines, intersection)).toBe(9);
     });
+
+    it("should not compute a short number of steps for an off-line intersection", () => {
+      const lines = [[vec2.fromValues(0, 0), vec2.fromValues(0, 5)]];
+      const intersection = vec2.fromValues(3, 0);
+
+      expect(stepsToIntersection(lines, intersection)).toBe(5);
+    });
+
+    it("should not be fooled by an intersection outside the line but in the same direction", () => {
+      const lines = [[vec2.fromValues(0, 0), vec2.fromValues(5, 0)]];
+      const intersection = vec2.fromValues(-1, 0);
+
+      expect(stepsToIntersection(lines, intersection)).toBe(5);
+    });
   });
 
   describe("findShortestStepSumIntersection()", () => {

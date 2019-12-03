@@ -130,6 +130,13 @@ export function findClosestIntersectionDistance(
   return Math.min(...findIntersections(s1, s2).map(manhattenDistance));
 }
 
+const inRange = (x: number, y: number) => (z: number): boolean => {
+  const upper = Math.max(x, y);
+  const lower = Math.min(x, y);
+
+  return lower <= z && z <= upper;
+};
+
 export function stepsToIntersection(
   lines: Array<Line>,
   intersection: vec2
@@ -138,10 +145,11 @@ export function stepsToIntersection(
 
   for (const line of lines) {
     const [x, y] = line;
-    const intersectionOnLine =
-      x[0] === intersection[0] || x[1] === intersection[1];
 
-    if (intersectionOnLine) {
+    if (
+      inRange(x[0], y[0])(intersection[0]) &&
+      inRange(x[1], y[1])(intersection[1])
+    ) {
       steps += vec2.distance(x, intersection);
       break;
     }
@@ -173,5 +181,3 @@ function solution() {
   console.log(`03-1: ${findClosestIntersectionDistance(input[0], input[1])}`);
   console.log(`03-2: ${findShortestStepSumIntersection(input[0], input[1])}`);
 }
-
-// solution();
