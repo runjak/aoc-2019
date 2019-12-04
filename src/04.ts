@@ -7,8 +7,14 @@ const toDigits = (x: number): Array<number> =>
     .map(Number);
 
 export const doubleDigits = (digits: Array<number>): boolean => {
-  for (let i = 1; i < digits.length; i++) {
-    if (digits[i] === digits[i - 1]) {
+  const buckets: Array<number> = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  for (const d of digits) {
+    buckets[d] += 1;
+  }
+
+  for (const b of buckets) {
+    if (b === 2) {
       return true;
     }
   }
@@ -51,3 +57,5 @@ export const countKeys = (start: number, stop: number): number => {
 function solution() {
   console.log(`04-1: ${countKeys(rangeStart, rangeStop)}`);
 }
+
+// solution();
