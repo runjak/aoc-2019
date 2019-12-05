@@ -88,7 +88,7 @@ export function seekSetupParameters(
   return null;
 }
 
-function solution() {
+export function solution() {
   console.log(`02-1: ${execute(setup(input), 0)[0]}`);
 
   const setupParameters = seekSetupParameters(input, desired);

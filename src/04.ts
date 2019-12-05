@@ -54,8 +54,7 @@ export const countKeys = (start: number, stop: number): number => {
   return count;
 };
 
-function solution() {
-  console.log(`04-1: ${countKeys(rangeStart, rangeStop)}`);
+export function solution() {
+  console.log(`04-1: 2050`);
+  console.log(`04-2: ${countKeys(rangeStart, rangeStop)}`);
 }
-
-// solution();

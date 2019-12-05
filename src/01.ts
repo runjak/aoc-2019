@@ -39,7 +39,7 @@ export function task2(): number {
   return sum(moduleMasses.map(recursiveFuelForModule));
 }
 
-function solution() {
+export function solution() {
   console.log(`01-1: ${task1()}`);
   console.log(`01-2: ${task2()}`);
 }

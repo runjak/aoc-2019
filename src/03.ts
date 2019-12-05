@@ -177,7 +177,7 @@ export function findShortestStepSumIntersection(
   );
 }
 
-function solution() {
+export function solution() {
   console.log(`03-1: ${findClosestIntersectionDistance(input[0], input[1])}`);
   console.log(`03-2: ${findShortestStepSumIntersection(input[0], input[1])}`);
 }
