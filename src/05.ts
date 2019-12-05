@@ -1,5 +1,4 @@
 import range from "lodash/range";
-import last from "lodash/last";
 import input from "./05.input.json";
 
 type Memory = Array<number>;
@@ -9,6 +8,10 @@ export enum OpCode {
   Multiply = 2,
   Read = 3,
   Write = 4,
+  JumpIfTrue = 5,
+  JumpIfFalse = 6,
+  LessThan = 7,
+  Equals = 8,
   Halt = 99
 }
 
@@ -18,6 +21,10 @@ export const isOpCode = (code: number): code is OpCode => {
     case OpCode.Multiply:
     case OpCode.Read:
     case OpCode.Write:
+    case OpCode.JumpIfTrue:
+    case OpCode.JumpIfFalse:
+    case OpCode.LessThan:
+    case OpCode.Equals:
     case OpCode.Halt:
       return true;
 
@@ -30,14 +37,20 @@ export const opLength = (code: OpCode): number => {
   switch (code) {
     case OpCode.Add:
     case OpCode.Multiply:
+    case OpCode.LessThan:
+    case OpCode.Equals:
       return 4;
+
+    case OpCode.JumpIfTrue:
+    case OpCode.JumpIfFalse:
+      return 3;
 
     case OpCode.Read:
     case OpCode.Write:
       return 2;
 
     case OpCode.Halt:
-      return 2;
+      return 1;
 
     default:
       return 4;
@@ -130,10 +143,56 @@ export const write = (
   stdOut.push(fetch(program, pc + 1, m1));
 };
 
+export const jumpIfTrue = (
+  program: Memory,
+  pc: number,
+  [m1, m2]: Array<ParameterMode>
+): number | null => {
+  const condition = fetch(program, pc + 1, m1);
+  const target = fetch(program, pc + 2, m2);
+
+  return condition !== 0 ? target : null;
+};
+
+export const jumpIfFalse = (
+  program: Memory,
+  pc: number,
+  [m1, m2]: Array<ParameterMode>
+): number | null => {
+  const condition = fetch(program, pc + 1, m1);
+  const target = fetch(program, pc + 2, m2);
+
+  return condition === 0 ? target : null;
+};
+
+export const lessThan = (
+  program: Memory,
+  pc: number,
+  [m1, m2]: Array<ParameterMode>
+) => {
+  const x = fetch(program, pc + 1, m1);
+  const y = fetch(program, pc + 2, m2);
+
+  program[program[pc + 3]] = x < y ? 1 : 0;
+};
+
+export const equals = (
+  program: Memory,
+  pc: number,
+  [m1, m2]: Array<ParameterMode>
+) => {
+  const x = fetch(program, pc + 1, m1);
+  const y = fetch(program, pc + 2, m2);
+
+  program[program[pc + 3]] = x === y ? 1 : 0;
+};
+
 export const execute = (program: Memory, stdIn: Memory, stdOut: Memory) => {
   let pc = 0;
+  let jumped = false;
 
   while (true) {
+    jumped = false;
     const { code, parameterModes } = parseOp(program[pc]);
 
     switch (code) {
@@ -153,25 +212,66 @@ export const execute = (program: Memory, stdIn: Memory, stdOut: Memory) => {
         write(program, stdOut, pc, parameterModes);
         break;
 
+      case OpCode.JumpIfTrue:
+        const jit = jumpIfTrue(program, pc, parameterModes);
+
+        if (jit !== null) {
+          pc = jit;
+          jumped = true;
+        }
+
+        break;
+
+      case OpCode.JumpIfFalse:
+        const jif = jumpIfFalse(program, pc, parameterModes);
+
+        if (jif !== null) {
+          pc = jif;
+          jumped = true;
+        }
+
+        break;
+
+      case OpCode.LessThan:
+        lessThan(program, pc, parameterModes);
+        break;
+
+      case OpCode.Equals:
+        equals(program, pc, parameterModes);
+        break;
+
       case OpCode.Halt:
       default:
         return;
     }
 
-    pc += opLength(code);
+    if (!jumped) {
+      pc += opLength(code);
+    }
   }
 };
 
-const task1 = (): number => {
+const task1 = (): Array<number> => {
   const program = [...input];
   const stdIn = [1];
   const stdOut: Array<number> = [];
 
   execute(program, stdIn, stdOut);
 
-  return last(stdOut) ?? NaN;
+  return stdOut;
 };
 
-const solution = () => {
+const task2 = (): Array<number> => {
+  const program = [...input];
+  const stdIn = [5];
+  const stdOut: Array<number> = [];
+
+  execute(program, stdIn, stdOut);
+
+  return stdOut;
+};
+
+export const solution = () => {
   console.log(`05-1: ${task1()}`);
+  console.log(`05-2: ${task2()}`);
 };
