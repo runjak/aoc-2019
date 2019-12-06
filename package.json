@@ -20,6 +20,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@tensorflow/tfjs-node": "^1.4.0",
     "@types/gl-matrix": "^2.4.5",
     "@types/lodash": "^4.14.149",
     "gl-matrix": "^3.1.0",
