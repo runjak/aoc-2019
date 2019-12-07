@@ -3,6 +3,8 @@ import flatten from "lodash/flatten";
 import flatMap from "lodash/flatMap";
 import uniq from "lodash/uniq";
 import sum from "lodash/sum";
+import head from "lodash/head";
+import sortBy from "lodash/sortBy";
 import input from "./06.input.json";
 
 type OrbitList = Array<Array<string>>;
@@ -57,8 +59,56 @@ export const countOrbits = (orbitMap: OrbitMap): number =>
     )
   );
 
+export const findClosestParent = (
+  indirectOrbitMap: OrbitMap,
+  children: Array<string>
+): string | null => {
+  const commonParents: Array<[string, Array<string>]> = Object.entries(
+    indirectOrbitMap
+  ).filter(
+    ([_, currentChildren]): boolean =>
+      difference(children, currentChildren).length === 0
+  );
+
+  const closest = head(
+    sortBy(commonParents, ([_, currentChildren]) => currentChildren.length)
+  );
+
+  return closest ? closest[0] : null;
+};
+
+export const connectingNodes = (
+  orbitMap: OrbitMap,
+  children: Array<string>
+): Array<string> => {
+  const indirectOrbitMap = indirectOrbits(orbitMap);
+  const parent = findClosestParent(indirectOrbitMap, children);
+
+  if (parent === null) {
+    return [];
+  }
+
+  const innerNodes = Object.entries(indirectOrbitMap).filter(
+    ([_, currentChildren]): boolean => !currentChildren.includes(parent)
+  );
+
+  const connectedNodes = innerNodes.filter(([_, currentChildren]) =>
+    children.some((child: string): boolean => currentChildren.includes(child))
+  );
+
+  return connectedNodes.map(([p]) => p);
+};
+
+export const countTransfers = (
+  orbitMap: OrbitMap,
+  a: string,
+  b: string
+): number => connectingNodes(orbitMap, [a, b]).length - 1;
+
 const task1 = (): number => countOrbits(toMap(input));
+const task2 = (): number => countTransfers(toMap(input), "YOU", "SAN");
 
 export const solution = () => {
   console.log(`06-1: ${task1()}`);
+  console.log(`06-2: ${task2()}`);
 };

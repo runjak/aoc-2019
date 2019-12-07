@@ -1,4 +1,12 @@
-import { getParents, toMap, indirectOrbits, countOrbits } from "./06";
+import {
+  getParents,
+  toMap,
+  indirectOrbits,
+  countOrbits,
+  findClosestParent,
+  connectingNodes,
+  countTransfers
+} from "./06";
 
 describe("06", () => {
   const example = [
@@ -13,6 +21,22 @@ describe("06", () => {
     ["E", "J"],
     ["J", "K"],
     ["K", "L"]
+  ];
+
+  const example2 = [
+    ["COM", "B"],
+    ["B", "C"],
+    ["C", "D"],
+    ["D", "E"],
+    ["E", "F"],
+    ["B", "G"],
+    ["G", "H"],
+    ["D", "I"],
+    ["E", "J"],
+    ["J", "K"],
+    ["K", "L"],
+    ["K", "YOU"],
+    ["I", "SAN"]
   ];
 
   describe("toMap()", () => {
@@ -58,6 +82,39 @@ describe("06", () => {
   describe("countOrbits()", () => {
     it("should correctly count the example", () => {
       expect(countOrbits(toMap(example))).toBe(42);
+    });
+  });
+
+  describe("findClosestParent()", () => {
+    it("should find the closest parent for two children from the example", () => {
+      const closestParent = findClosestParent(indirectOrbits(toMap(example)), [
+        "I",
+        "L"
+      ]);
+
+      expect(closestParent).toBe("D");
+    });
+  });
+
+  describe("connectingNodes()", () => {
+    it("should compute the connecting nodes for the example", () => {
+      const expected = ["D", "E", "J", "K"];
+      const actual = connectingNodes(toMap(example), ["I", "L"]);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should compute the connecting nodes for example2", () => {
+      const expected = ["D", "E", "J", "K", "I"];
+      const actual = connectingNodes(toMap(example2), ["YOU", "SAN"]);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("countTransfers()", () => {
+    it("should count example2 as desired", () => {
+      expect(countTransfers(toMap(example2), "YOU", "SAN")).toBe(4);
     });
   });
 });
