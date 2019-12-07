@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import input from "./05.input.json";
 
-type Memory = Array<number>;
+export type Memory = Array<number>;
 
 export enum OpCode {
   Add = 1,

@@ -3260,6 +3260,11 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
+permutated@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/permutated/-/permutated-2.0.0.tgz#b64d48d66996f11b5a26db2d3c8388ad7823a4db"
+  integrity sha512-U0sZ3Xrtn+Um857QaUY2auxtIIae6w7n2GHi6e83ZH3+/CCxX2F6WTte2N/tLGVGnd7eKmiawDbq/TMEKVa66A==
+
 pify@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
