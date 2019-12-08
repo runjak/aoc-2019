@@ -1,4 +1,4 @@
-import { sliceImage, scoreLayer } from "./08";
+import { sliceImage, scoreLayer, mergeLayers } from "./08";
 
 describe("08", () => {
   describe("sliceImage()", () => {
@@ -20,6 +20,18 @@ describe("08", () => {
       };
 
       expect(scoreLayer(input)).toEqual(expected);
+    });
+  });
+
+  describe("mergeLayers()", () => {
+    it("should merge layers as specified in the example", () => {
+      const example = "0222112222120000";
+      const layers = sliceImage(example, 2, 2);
+
+      const expected = "0110";
+      const actual = mergeLayers(layers);
+
+      expect(actual).toEqual(expected);
     });
   });
 });

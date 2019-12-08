@@ -1,5 +1,5 @@
-import range from "lodash/range";
 import minBy from "lodash/minBy";
+import zipWith from "lodash/zipWith";
 import input from "./08.input.json";
 
 const { image } = input;
@@ -12,6 +12,7 @@ export const sliceImage = (
   height: number
 ): Array<string> => {
   const sliceLength = width * height;
+
   let slices: Array<string> = [];
 
   for (let i = 0; i < data.length; i += sliceLength) {
@@ -62,6 +63,26 @@ const task1 = (): number => {
   return oneCount * twoCount;
 };
 
+export const mergeLayers = (layers: Array<string>): string =>
+  zipWith(
+    ...layers.map(layer => layer.split("")),
+    (...pixels: Array<string>): string => pixels.find(p => p !== "2") || "λ"
+  ).join("");
+
+export const wrapLayer = (layer: string, width: number): string => {
+  let rows: Array<string> = [];
+
+  for (let i = 0; i < layer.length; i += width) {
+    rows.push(layer.slice(i, i + width));
+  }
+
+  return rows.join("\n").replace(/0/g, " ");
+};
+
+const task2 = (): string =>
+  wrapLayer(mergeLayers(sliceImage(image, width, height)), width);
+
 const solution = () => {
   console.log(`08-1: ${task1()}`);
+  console.log(`08-2:\n${task2()}`);
 };
