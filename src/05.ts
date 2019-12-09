@@ -12,6 +12,7 @@ export enum OpCode {
   JumpIfFalse = 6,
   LessThan = 7,
   Equals = 8,
+  AdjustRelativeBase = 9,
   Halt = 99
 }
 
@@ -26,6 +27,7 @@ export const isOpCode = (code: number): code is OpCode => {
     case OpCode.LessThan:
     case OpCode.Equals:
     case OpCode.Halt:
+    case OpCode.AdjustRelativeBase:
       return true;
 
     default:
@@ -47,6 +49,7 @@ export const opLength = (code: OpCode): number => {
 
     case OpCode.Read:
     case OpCode.Write:
+    case OpCode.AdjustRelativeBase:
       return 2;
 
     case OpCode.Halt:
@@ -59,7 +62,8 @@ export const opLength = (code: OpCode): number => {
 
 export enum ParameterMode {
   Position = 0,
-  Immediate = 1
+  Immediate = 1,
+  Relative = 2
 }
 
 type Op = {
@@ -88,6 +92,10 @@ export const parseOp = (op: number): Op => {
 
       if (mode === "1") {
         return ParameterMode.Immediate;
+      }
+
+      if (mode === "2") {
+        return ParameterMode.Relative;
       }
 
       throw new Error(`Invalid ParameterMode: ${mode}`);
