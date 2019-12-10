@@ -48,16 +48,16 @@ export const mkStore = (state: State): Store => (
   const immediate = memory[p] || 0;
 
   switch (mode) {
-    case ParameterMode.Immediate:
+    case ParameterMode.Position:
       memory[immediate] = value;
+      break;
+
+    case ParameterMode.Immediate:
+      memory[p] = value;
       break;
 
     case ParameterMode.Relative:
       memory[relativeBase + immediate] = value;
-      break;
-
-    case ParameterMode.Position:
-      memory[memory[immediate]] = value;
       break;
   }
 };
@@ -170,25 +170,55 @@ export const mkAdjustRelativeBase = (state: State, fetch: Fetch) => ([
   state.pc += opLength(OpCode.AdjustRelativeBase);
 };
 
+export const mkAccess = (state: State) => ({
+  fetch: mkFetch(state),
+  store: mkStore(state)
+});
+
+export const mkCommandHandlers = (
+  state: State,
+  fetch: Fetch,
+  store: Store,
+  stdIn: StdIn,
+  stdOut: StdOut
+) => ({
+  add: mkAdd(state, fetch, store),
+  multiply: mkMultiply(state, fetch, store),
+  read: mkRead(state, store, stdIn),
+  write: mkWrite(state, fetch, stdOut),
+  jumpIfTrue: mkJumpIfTrue(state, fetch),
+  jumpIfFalse: mkJumpIfFalse(state, fetch),
+  lessThan: mkLessThan(state, fetch, store),
+  equals: mkEquals(state, fetch, store),
+  adjustRelativeBase: mkAdjustRelativeBase(state, fetch)
+});
+
 export const execute = async (
   state: State,
   stdIn: () => Promise<number>,
-  stdOut: (n: number) => Promise<void>
-): Promise<void> => {
-  const fetch = mkFetch(state);
-  const store = mkStore(state);
+  stdOut: (n: number) => Promise<void>,
+  createAccess: typeof mkAccess = mkAccess,
+  createCommandHandlers: typeof mkCommandHandlers = mkCommandHandlers
+): Promise<State> => {
+  const { fetch, store } = createAccess(state);
 
-  const add = mkAdd(state, fetch, store);
-  const multiply = mkMultiply(state, fetch, store);
-  const read = mkRead(state, store, stdIn);
-  const write = mkWrite(state, fetch, stdOut);
-  const jumpIfTrue = mkJumpIfTrue(state, fetch);
-  const jumpIfFalse = mkJumpIfFalse(state, fetch);
-  const lessThan = mkLessThan(state, fetch, store);
-  const equals = mkEquals(state, fetch, store);
-  const adjustRelativeBase = mkAdjustRelativeBase(state, fetch);
+  const {
+    add,
+    multiply,
+    read,
+    write,
+    jumpIfTrue,
+    jumpIfFalse,
+    lessThan,
+    equals,
+    adjustRelativeBase
+  } = createCommandHandlers(state, fetch, store, stdIn, stdOut);
 
   while (true) {
+    if (state.pc > state.memory.length) {
+      return state;
+    }
+
     const { code, parameterModes } = parseOp(state.memory[state.pc]);
 
     switch (code) {
@@ -229,8 +259,30 @@ export const execute = async (
         break;
 
       case OpCode.Halt:
+        state.pc += opLength(code);
       default:
-        return;
+        return state;
     }
   }
+};
+
+export const task1 = async (): Promise<Array<number>> => {
+  const stdIn = [1];
+  const stdOut: Array<number> = [];
+
+  await execute(
+    mkState(boostProgram),
+    async () => {
+      if (stdIn.length > 0) {
+        return stdIn.shift();
+      }
+
+      throw new Error("unexpected stdIn");
+    },
+    async n => {
+      stdOut.push(n);
+    }
+  );
+
+  return stdOut;
 };
