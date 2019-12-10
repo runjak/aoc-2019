@@ -286,3 +286,24 @@ export const task1 = async (): Promise<Array<number>> => {
 
   return stdOut;
 };
+
+export const task2 = async (): Promise<Array<number>> => {
+  const stdIn = [2];
+  const stdOut: Array<number> = [];
+
+  await execute(
+    mkState(boostProgram),
+    async () => {
+      if (stdIn.length > 0) {
+        return stdIn.shift();
+      }
+
+      throw new Error("unexpected stdIn");
+    },
+    async n => {
+      stdOut.push(n);
+    }
+  );
+
+  return stdOut;
+};

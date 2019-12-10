@@ -1,5 +1,5 @@
 import { parseOp } from "./05";
-import { mkState, execute, task1 } from "./09";
+import { mkState, execute, task1, task2 } from "./09";
 
 describe("09", () => {
   describe("parseOp()", () => {
@@ -77,6 +77,15 @@ describe("09", () => {
     it("should produce the expected boost code", async () => {
       const expected = [3546494377];
       const actual = await task1();
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("task2()", () => {
+    it("should produce the coordinates of the distress signal", async () => {
+      const expected = [47253];
+      const actual = await task2();
 
       expect(actual).toEqual(expected);
     });
