@@ -120,3 +120,20 @@ export const maxAsteroid = (field: Field): Asteroid => {
 };
 
 export const task1 = (): number => maxAsteroid(parseAsteroids(input)).visible;
+
+export const circle = (field: Field): Array<[number, number]> => {
+  const as = angles(field);
+
+  const centerIndex = as.findIndex(([, width]) => width === 0);
+  const centerFirst = [
+    ...as.slice(centerIndex, as.length),
+    ...as.slice(0, centerIndex)
+  ];
+
+  return [
+    ...centerFirst
+      .map(([depth, width]): [number, number] => [-depth, width])
+      .reverse(),
+    ...centerFirst
+  ];
+};

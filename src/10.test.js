@@ -6,7 +6,8 @@ import {
   walkAngles,
   visibillityMap,
   maxAsteroid,
-  task1
+  task1,
+  circle
 } from "./10";
 
 describe("10", () => {
@@ -177,6 +178,26 @@ describe("10", () => {
   describe("task1()", () => {
     it("should compute the correct solution", () => {
       expect(task1()).toBe(267);
+    });
+  });
+
+  describe("circle()", () => {
+    it("should compute the angles for a circle in the desired order", () => {
+      const field = [
+        [null, null],
+        [null, null]
+      ];
+      const expected = [
+        [-1, 0],
+        [-1, -1],
+        [0, -1],
+        [1, -1],
+        [1, 0],
+        [1, 1],
+        [0, 1]
+      ];
+
+      expect(circle(field)).toEqual(expected);
     });
   });
 });
