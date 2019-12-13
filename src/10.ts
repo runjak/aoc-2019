@@ -3,6 +3,8 @@ import flatMap from "lodash/flatMap";
 import uniqBy from "lodash/uniqBy";
 import flatten from "lodash/flatten";
 import maxBy from "lodash/maxBy";
+import sortBy from "lodash/sortBy";
+import { vec2 } from "gl-matrix";
 import input from "./10.input.json";
 
 type Asteroid = { x: number; y: number; visible: number };
@@ -121,10 +123,13 @@ export const maxAsteroid = (field: Field): Asteroid => {
 
 export const task1 = (): number => maxAsteroid(parseAsteroids(input)).visible;
 
-export const circle = (field: Field): Array<[number, number]> => {
-  const as = angles(field);
+const toRadians = ([depth, width]: [number, number]): number =>
+  vec2.angle(vec2.fromValues(depth, width), vec2.fromValues(1, 0));
 
-  return as;
+export const circle = (field: Field): Array<[number, number]> => {
+  const as = sortBy(angles(field), a => toRadians(a));
+
+  console.log({ as });
 
   const centerIndex = as.findIndex(([, width]) => width === 0);
   const centerFirst = [
@@ -133,9 +138,8 @@ export const circle = (field: Field): Array<[number, number]> => {
   ];
 
   return [
-    ...centerFirst
-      .map(([depth, width]): [number, number] => [-depth, width])
-      .reverse(),
+    ...centerFirst.map(([depth, width]): [number, number] => [-depth, width]),
+    // .reverse(),
     ...centerFirst
   ];
 };
