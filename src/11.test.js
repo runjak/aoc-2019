@@ -1,4 +1,4 @@
-import { paint, task1 } from "./11";
+import { paint, task1, task2 } from "./11";
 
 describe("11", () => {
   describe("paint()", () => {
@@ -30,6 +30,22 @@ describe("11", () => {
       const actual = await task1();
 
       expect(actual).toBe(expected);
+    });
+  });
+
+  describe("task2", () => {
+    it("should render the expected output", async () => {
+      const expected = [
+        "  ##   ##  ###  ###  #  # #### #  # #      ",
+        " #  # #  # #  # #  # # #     # #  # #      ",
+        " #    #  # #  # #  # ##     #  #  # #      ",
+        " # ## #### ###  ###  # #   #   #  # #      ",
+        " #  # #  # # #  #    # #  #    #  # #      ",
+        "  ### #  # #  # #    #  # ####  ##  ####   "
+      ];
+      const actual = await task2();
+
+      expect(actual).toEqual(expected.join("\n"));
     });
   });
 });
