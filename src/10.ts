@@ -30,8 +30,8 @@ export const gcd = (a: number, b: number): number =>
 export const angles = (field: Field): Array<[number, number]> => {
   const maxWidth = Math.max(...field.map(line => line.length));
 
-  const depths = range(0, field.length + 1);
-  const widths = range(-maxWidth, maxWidth + 1);
+  const depths = range(0, field.length);
+  const widths = range(-(maxWidth - 1), maxWidth);
 
   const originalAngles = flatMap(
     depths,
@@ -123,6 +123,8 @@ export const task1 = (): number => maxAsteroid(parseAsteroids(input)).visible;
 
 export const circle = (field: Field): Array<[number, number]> => {
   const as = angles(field);
+
+  return as;
 
   const centerIndex = as.findIndex(([, width]) => width === 0);
   const centerFirst = [
