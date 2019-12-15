@@ -24,7 +24,8 @@ export const parseAsteroids = (lines: Array<string>): Field =>
         )
   );
 
-const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+export const gcd = (a: number, b: number): number =>
+  b === 0 ? a : gcd(b, a % b);
 
 export const angles = (field: Field): Array<[number, number]> => {
   const maxWidth = Math.max(...field.map(line => line.length));

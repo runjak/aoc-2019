@@ -1,12 +1,18 @@
 import { vec3 } from "gl-matrix";
-import simulatedMoons from "./12.test.simulateMoons.json";
+import last from "lodash/last";
+import simulatedMoonsJson from "./12.test.simulateMoons.json";
 import {
   mkMoons,
   velocityDeltas,
   simulateMoons,
   totalEnergy,
   simulateMoonSteps,
-  task1
+  task1,
+  moonsToDimensions,
+  cycleLengths,
+  lcm,
+  cycleLength,
+  task2
 } from "./12";
 
 describe("12", () => {
@@ -22,6 +28,13 @@ describe("12", () => {
     { x: 2, y: -7, z: 3 },
     { x: 9, y: -8, z: -3 }
   ];
+
+  const simulatedMoons = simulatedMoonsJson.map(moons =>
+    moons.map(({ position, velocity }) => ({
+      position: vec3.fromValues(position.x, position.y, position.z),
+      velocity: vec3.fromValues(velocity.x, velocity.y, velocity.z)
+    }))
+  );
 
   describe("mkMoons()", () => {
     it("should correctly create example moons", () => {
@@ -61,12 +74,7 @@ describe("12", () => {
 
   describe("simulateMoons()", () => {
     it("should calculate moons as specified for the first 10 steps of example1", () => {
-      const expected = simulatedMoons.map(moons =>
-        moons.map(({ position, velocity }) => ({
-          position: vec3.fromValues(position.x, position.y, position.z),
-          velocity: vec3.fromValues(velocity.x, velocity.y, velocity.z)
-        }))
-      );
+      const expected = simulatedMoons;
 
       let actual = [];
       const moonGen = simulateMoons(mkMoons(example1));
@@ -102,6 +110,67 @@ describe("12", () => {
   describe("task1()", () => {
     it("should compute the correct number", () => {
       expect(task1()).toBe(9999);
+    });
+  });
+
+  describe("moonsToDimensions()", () => {
+    it("should separate the dimensions for given moons as desired", () => {
+      const expected = [
+        [
+          [-1, 0],
+          [2, 0],
+          [4, 0],
+          [3, 0]
+        ],
+        [
+          [0, 0],
+          [-10, 0],
+          [-8, 0],
+          [5, 0]
+        ],
+        [
+          [2, 0],
+          [-7, 0],
+          [8, 0],
+          [-1, 0]
+        ]
+      ];
+
+      expect(moonsToDimensions(mkMoons(example1))).toEqual(expected);
+    });
+  });
+
+  describe("cycleLengths()", () => {
+    it("should compute the lengths of per dimension cycles for example1", () => {
+      const actual = cycleLengths(mkMoons(example1));
+
+      expect(actual).toEqual([18, 28, 44]); // 2772 vs.24795
+    });
+  });
+
+  describe("lcm()", () => {
+    it("should compute the least common multiple of its parameters", () => {
+      expect(lcm(2, 3, 5)).toBe(30);
+    });
+
+    it("should work when the parameters have common prime factors", () => {
+      expect(lcm(2, 3, 6)).toBe(6);
+    });
+  });
+
+  describe("cycleLength()", () => {
+    it("should compute the specified cycle length for example1", () => {
+      expect(cycleLength(mkMoons(example1))).toBe(2772);
+    });
+
+    it("should compute the specified cycle length for example2", () => {
+      expect(cycleLength(mkMoons(example2))).toBe(4686774924);
+    });
+  });
+
+  describe("task2()", () => {
+    it("should compute the correct number", () => {
+      expect(task2()).toBe(282399002133976);
     });
   });
 });

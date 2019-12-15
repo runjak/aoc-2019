@@ -1,5 +1,8 @@
 import { vec3 } from "gl-matrix";
 import sum from "lodash/sum";
+import unzip from "lodash/unzip";
+
+import { gcd } from "./10";
 
 import input from "./12.input.json";
 
@@ -95,3 +98,88 @@ export const simulateMoonSteps = (
 
 export const task1 = (): number =>
   totalEnergy(simulateMoonSteps(1000, mkMoons(input)));
+
+type MoonDimension = [number, number];
+
+export const moonToDimensions = ({
+  position: [px, py, pz],
+  velocity: [vx, vy, vz]
+}: Moon): Array<MoonDimension> => [
+  [px, vx],
+  [py, vy],
+  [pz, vz]
+];
+
+export const moonsToDimensions = (
+  moons: Array<Moon>
+): Array<Array<MoonDimension>> => unzip(moons.map(moonToDimensions));
+
+export const dimensionKey = (dimension: Array<MoonDimension>): string =>
+  JSON.stringify(dimension);
+
+export const cycleLengths = (moons: Array<Moon>): [number, number, number] => {
+  let xSet: Set<string> = new Set();
+  let ySet: Set<string> = new Set();
+  let zSet: Set<string> = new Set();
+
+  let xCount: number | null = null;
+  let yCount: number | null = null;
+  let zCount: number | null = null;
+
+  let currentCount = 0;
+  for (const currentMoons of simulateMoons(moons)) {
+    const [xs, ys, zs] = moonsToDimensions(currentMoons);
+
+    if (xCount === null) {
+      const xKey = dimensionKey(xs);
+
+      if (xSet.has(xKey)) {
+        xCount = currentCount;
+      } else {
+        xSet.add(xKey);
+      }
+    }
+
+    if (yCount === null) {
+      const yKey = dimensionKey(ys);
+
+      if (ySet.has(yKey)) {
+        yCount = currentCount;
+      } else {
+        ySet.add(yKey);
+      }
+    }
+
+    if (zCount === null) {
+      const zKey = dimensionKey(zs);
+
+      if (zSet.has(zKey)) {
+        zCount = currentCount;
+      } else {
+        zSet.add(zKey);
+      }
+    }
+
+    if (xCount !== null && yCount !== null && zCount !== null) {
+      return [xCount, yCount, zCount];
+    }
+
+    currentCount++;
+  }
+};
+
+export const lcm = (...xs: Array<number>): number => {
+  if (xs.length < 2) {
+    return xs[0] || 0;
+  }
+
+  const [x, y, ...zs] = xs;
+  const l = Math.abs(x * y) / gcd(x, y);
+
+  return lcm(l, ...zs);
+};
+
+export const cycleLength = (moons: Array<Moon>): number =>
+  lcm(...cycleLengths(moons));
+
+export const task2 = (): number => cycleLength(mkMoons(input));
