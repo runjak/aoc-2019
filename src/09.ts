@@ -7,11 +7,11 @@ type State = {
   relativeBase: number;
 };
 
-type StdIn = () => Promise<number>;
-type StdOut = (x: number) => Promise<void>;
+export type StdIn = () => Promise<number>;
+export type StdOut = (x: number) => Promise<void>;
 
-type Fetch = (p: number, mode: ParameterMode) => number;
-type Store = (p: number, mode: ParameterMode, value: number) => void;
+export type Fetch = (p: number, mode: ParameterMode) => number;
+export type Store = (p: number, mode: ParameterMode, value: number) => void;
 
 export const mkState = (code: Memory): State => ({
   memory: [...code],
