@@ -19,13 +19,17 @@ enum Tile {
 }
 
 export const panelWriter = (panel: Panel): StdOut => {
-  let buffer = [];
+  let buffer: Array<number> = [];
 
   return async (n: number) => {
     buffer.push(n);
 
     if (buffer.length >= 3) {
-      panelRender(panel)(buffer.shift(), buffer.shift(), buffer.shift());
+      const x = buffer.shift() || 0;
+      const y = buffer.shift() || 0;
+      const z = buffer.shift() || 0;
+
+      panelRender(panel)(x, y, z);
     }
   };
 };

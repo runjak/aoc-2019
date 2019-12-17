@@ -110,7 +110,13 @@ export const visibillityMap = (field: Field): Array<Array<number>> =>
 export const maxAsteroid = (field: Field): Asteroid => {
   walkAngles(angles(field), field);
 
-  return maxBy(flatten(field), a => (a === null ? 0 : a.visible));
+  return (
+    maxBy(flatten(field), a => (a === null ? 0 : a.visible)) || {
+      x: NaN,
+      y: NaN,
+      visible: NaN
+    }
+  );
 };
 
 export const task1 = (): number => maxAsteroid(parseAsteroids(input)).visible;

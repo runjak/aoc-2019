@@ -161,11 +161,13 @@ export const cycleLengths = (moons: Array<Moon>): [number, number, number] => {
     }
 
     if (xCount !== null && yCount !== null && zCount !== null) {
-      return [xCount, yCount, zCount];
+      break;
     }
 
     currentCount++;
   }
+
+  return [xCount || 0, yCount || 0, zCount || 0];
 };
 
 export const lcm = (...xs: Array<number>): number => {

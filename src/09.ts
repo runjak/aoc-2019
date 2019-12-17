@@ -272,6 +272,7 @@ export const task1 = async (): Promise<Array<number>> => {
 
   await execute(
     mkState(boostProgram),
+    // @ts-ignore failure intended
     async () => {
       if (stdIn.length > 0) {
         return stdIn.shift();
@@ -279,7 +280,7 @@ export const task1 = async (): Promise<Array<number>> => {
 
       throw new Error("unexpected stdIn");
     },
-    async n => {
+    async (n: number) => {
       stdOut.push(n);
     }
   );
@@ -293,6 +294,7 @@ export const task2 = async (): Promise<Array<number>> => {
 
   await execute(
     mkState(boostProgram),
+    // @ts-ignore failure intended
     async () => {
       if (stdIn.length > 0) {
         return stdIn.shift();
@@ -300,7 +302,7 @@ export const task2 = async (): Promise<Array<number>> => {
 
       throw new Error("unexpected stdIn");
     },
-    async n => {
+    async (n: number) => {
       stdOut.push(n);
     }
   );
