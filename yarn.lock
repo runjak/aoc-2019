@@ -920,10 +920,10 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
   integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
 
-"@types/node@^12.12.19":
-  version "12.12.19"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.19.tgz#6133aa2a765accdec89ad7792b651a0830f7a34e"
-  integrity sha512-OXw80IpKyLeuZ5a8r2XCxVNnRAtS3lRDHBleSUQmbgu3C6eKqRsz7/5XNBU0EvK0RTVfotvYFgvRwwe2jeoiKw==
+"@types/node@^12.12.21":
+  version "12.12.21"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.21.tgz#aa44a6363291c7037111c47e4661ad210aded23f"
+  integrity sha512-8sRGhbpU+ck1n0PGAUgVrWrWdjSW2aqNeyC15W88GRsMpSwzv6RJGlLhE7s2RhVSOdyDmxbqlWSeThq4/7xqlA==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -2257,6 +2257,11 @@ istanbul-reports@^2.2.6:
   integrity sha512-SKi4rnMyLBKe0Jy2uUdx28h8oG7ph2PPuQPvIAh31d+Ci+lSiEu4C+h3oBPuJ9+mPKhOyW0M8gY4U5NM1WLeXA==
   dependencies:
     handlebars "^4.1.2"
+
+javascript-lp-solver@^0.4.24:
+  version "0.4.24"
+  resolved "https://registry.yarnpkg.com/javascript-lp-solver/-/javascript-lp-solver-0.4.24.tgz#3bb5f8aa051f0bf04747e39130133a0f738f635c"
+  integrity sha512-5edoDKnMrt/u3M6GnZKDDIPxOyFOg+WrwDv8mjNiMC2DePhy2H9/FFQgf4ggywaXT1utvkxusJcjQUER72cZmA==
 
 jest-changed-files@^24.9.0:
   version "24.9.0"

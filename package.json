@@ -8,9 +8,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "13": "NODE_ENV=production ./node_modules/.bin/ts-node src/13.ts",
     "test": "jest",
-    "start": "ts-node src/index.ts",
-    "13": "NODE_ENV=production ./node_modules/.bin/ts-node src/13.ts"
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
@@ -18,8 +18,9 @@
     "@babel/preset-typescript": "^7.7.4",
     "@types/gl-matrix": "^2.4.5",
     "@types/lodash": "^4.14.149",
-    "@types/node": "^12.12.19",
+    "@types/node": "^12.12.21",
     "gl-matrix": "^3.1.0",
+    "javascript-lp-solver": "^0.4.24",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",
     "permutated": "^2.0.0",
