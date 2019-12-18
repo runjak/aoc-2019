@@ -1,4 +1,4 @@
-import { parseInput } from "./14";
+import { parseInput, solveToMine, toLpModel, task1 } from "./14";
 
 describe("14", () => {
   const example1 = [
@@ -11,6 +11,16 @@ describe("14", () => {
   ].join("\n");
 
   const example2 = [
+    "9 ORE => 2 A",
+    "8 ORE => 3 B",
+    "7 ORE => 5 C",
+    "3 A, 4 B => 1 AB",
+    "5 B, 7 C => 1 BC",
+    "4 C, 1 A => 1 CA",
+    "2 AB, 3 BC, 4 CA => 1 FUEL"
+  ].join("\n");
+
+  const example3 = [
     "157 ORE => 5 NZVS",
     "165 ORE => 6 DCFZ",
     "44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL",
@@ -22,7 +32,7 @@ describe("14", () => {
     "3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT"
   ].join("\n");
 
-  const example3 = [
+  const example4 = [
     "2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG",
     "17 NVRVD, 3 JNWZP => 8 VPVL",
     "53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL",
@@ -37,7 +47,7 @@ describe("14", () => {
     "176 ORE => 6 VJHF"
   ].join("\n");
 
-  const example4 = [
+  const example5 = [
     "171 ORE => 8 CNZTR",
     "7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL",
     "114 ORE => 4 BHXH",
@@ -58,7 +68,7 @@ describe("14", () => {
   ].join("\n");
 
   describe("parseInput()", () => {
-    it("should parse example21 as expected", () => {
+    it("should parse example1 as expected", () => {
       const expected = [
         {
           from: [{ name: "ORE", quantity: 10 }],
@@ -99,6 +109,53 @@ describe("14", () => {
       ];
 
       expect(parseInput(example1)).toEqual(expected);
+    });
+  });
+
+  describe("solveToMine()", () => {
+    it("should solve example1 as specified", async () => {
+      const model = toLpModel(parseInput(example1));
+      delete global.window;
+      const actual = await solveToMine(model);
+      expect(actual).toBe(31);
+    });
+
+    it("should solve example2 as specified", async () => {
+      const model = toLpModel(parseInput(example2));
+      delete global.window;
+      const actual = await solveToMine(model);
+      expect(actual).toBe(165);
+    });
+
+    it("should solve example3 as specified", async () => {
+      const model = toLpModel(parseInput(example3));
+      delete global.window;
+      const actual = await solveToMine(model);
+      expect(actual).toBe(13312);
+    });
+
+    it("should solve example4 as specified", async () => {
+      const model = toLpModel(parseInput(example4));
+      delete global.window;
+      const actual = await solveToMine(model);
+      expect(actual).toBe(180697);
+    });
+
+    it("should solve example5 as specified", async () => {
+      const model = toLpModel(parseInput(example5));
+      delete global.window;
+      const actual = await solveToMine(model);
+      // website says 2210736
+      expect(actual).toBe(2210740);
+    });
+  });
+
+  describe("task1()", () => {
+    it("should compute the desired result", async () => {
+      delete global.window;
+      jest.setTimeout(241000);
+      const actual = await task1();
+      expect(actual).toBe(178154);
     });
   });
 });

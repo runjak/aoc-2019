@@ -1,6 +1,6 @@
 import fs from "fs";
 // @ts-ignore FIXME get the typing right
-import { Solve, Model } from "javascript-lp-solver/src/main";
+import * as solver from "javascript-lp-solver";
 
 const getInput = () => String(fs.readFileSync("./src/14.input.txt"));
 
@@ -33,37 +33,54 @@ export const parseInput = (input: string): Array<Production> =>
   );
 
 export const toLpModel = (productions: Array<Production>) => {
+  const targetNames = productions.map(({ to: { name } }) => name);
+
   return {
     optimize: "mine",
     opType: "min",
     constraints: {
+      ...Object.fromEntries(targetNames.map(name => [name, { min: 0 }])),
       FUEL: { min: 1 },
-      ORE: { min: 0 },
-      A: { min: 0 },
-      B: { min: 0 },
-      C: { min: 0 },
-      D: { min: 0 },
-      E: { min: 0 }
+      ORE: { min: 0 }
     },
     variables: {
-      mine: { ORE: 1 },
-      FUEL: { FUEL: 1, E: -1, A: -7 },
-      E: { E: 1, D: -1, A: -7 },
-      D: { D: 1, C: -1, A: -7 },
-      C: { C: 1, B: -1, A: -7 },
-      B: { B: 1, ORE: -1 },
-      A: { A: 10, ORE: -10 }
+      ...Object.fromEntries(
+        productions.map(({ to, from }: Production): [string, object] => {
+          return [
+            to.name,
+            {
+              ...Object.fromEntries(
+                from.map(({ name, quantity }: Product): [string, number] => [
+                  name,
+                  -quantity
+                ])
+              ),
+              [to.name]: to.quantity
+            }
+          ];
+        })
+      ),
+      mine: { ORE: 1 }
     },
     ints: {
+      ...Object.fromEntries(targetNames.map(name => [name, 1])),
       FUEL: 1,
-      ORE: 1,
-      A: 1,
-      B: 1,
-      C: 1,
-      D: 1,
-      E: 1
+      ORE: 1
+    },
+    external: {
+      solver: "lpsolve",
+      binPath: "/usr/bin/lp_solve",
+      tempName: "/tmp/aoc-2019.14.txt",
+      args: ["-timeout", 240]
     }
   };
 };
 
-console.log(Solve(toLpModel([])));
+export const solveToMine = async (model: unknown): Promise<number> => {
+  const result = await solver.Solve(model);
+
+  return Number(result.mine) ?? NaN;
+};
+
+export const task1 = (): Promise<number> =>
+  solveToMine(toLpModel(parseInput(getInput())));

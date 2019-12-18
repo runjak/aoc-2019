@@ -1,4 +1,4 @@
-declare module "javascript-lp-solver/src/main" {
+declare module "javascript-lp-solver" {
   // https://github.com/JWally/jsLPSolver#readme
 
   type OpType = "min" | "max";
