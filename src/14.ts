@@ -32,7 +32,7 @@ export const parseInput = (input: string): Array<Production> =>
     }
   );
 
-export const toLpModel = (productions: Array<Production>) => {
+export const toOreModel = (productions: Array<Production>) => {
   const targetNames = productions.map(({ to: { name } }) => name);
 
   return {
@@ -83,4 +83,61 @@ export const solveToMine = async (model: unknown): Promise<number> => {
 };
 
 export const task1 = (): Promise<number> =>
-  solveToMine(toLpModel(parseInput(getInput())));
+  solveToMine(toOreModel(parseInput(getInput())));
+
+export const toFuelModel = (productions: Array<Production>) => {
+  const trillion = 1000000000000;
+
+  const targetNames = productions.map(({ to: { name } }) => name);
+
+  return {
+    optimize: "FUEL",
+    opType: "max",
+    constraints: {
+      ...Object.fromEntries(targetNames.map(name => [name, { min: 0 }])),
+      ORE: { equal: 0 },
+      mine: { equal: 1 }
+    },
+    variables: {
+      ...Object.fromEntries(
+        productions.map(({ to, from }: Production): [string, object] => {
+          return [
+            to.name,
+            {
+              ...Object.fromEntries(
+                from.map(({ name, quantity }: Product): [string, number] => [
+                  name,
+                  -quantity
+                ])
+              ),
+              [to.name]: to.quantity
+            }
+          ];
+        })
+      ),
+      mine: { ORE: trillion }
+    },
+    ints: {
+      ...Object.fromEntries(targetNames.map(name => [name, 1])),
+      ORE: 1,
+      mine: 1
+    },
+    external: {
+      solver: "lpsolve",
+      binPath: "/usr/bin/lp_solve",
+      tempName: "/tmp/aoc-2019.14.txt",
+      args: ["-timeout", 240, "-ac", 0.1]
+    }
+  };
+};
+
+export const solveToFuel = async (model: unknown): Promise<number> => {
+  const result = await solver.Solve(model);
+
+  // console.log(result);
+
+  return Math.floor(Number(result["Value of objective function"])) ?? NaN;
+};
+
+export const task2 = (): Promise<number> =>
+  solveToFuel(toFuelModel(parseInput(getInput())));

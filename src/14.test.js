@@ -1,4 +1,12 @@
-import { parseInput, solveToMine, toLpModel, task1 } from "./14";
+import {
+  parseInput,
+  solveToMine,
+  toOreModel,
+  task1,
+  solveToFuel,
+  toFuelModel,
+  task2
+} from "./14";
 
 describe("14", () => {
   const example1 = [
@@ -114,35 +122,35 @@ describe("14", () => {
 
   describe("solveToMine()", () => {
     it("should solve example1 as specified", async () => {
-      const model = toLpModel(parseInput(example1));
+      const model = toOreModel(parseInput(example1));
       delete global.window;
       const actual = await solveToMine(model);
       expect(actual).toBe(31);
     });
 
     it("should solve example2 as specified", async () => {
-      const model = toLpModel(parseInput(example2));
+      const model = toOreModel(parseInput(example2));
       delete global.window;
       const actual = await solveToMine(model);
       expect(actual).toBe(165);
     });
 
     it("should solve example3 as specified", async () => {
-      const model = toLpModel(parseInput(example3));
+      const model = toOreModel(parseInput(example3));
       delete global.window;
       const actual = await solveToMine(model);
       expect(actual).toBe(13312);
     });
 
     it("should solve example4 as specified", async () => {
-      const model = toLpModel(parseInput(example4));
+      const model = toOreModel(parseInput(example4));
       delete global.window;
       const actual = await solveToMine(model);
       expect(actual).toBe(180697);
     });
 
     it("should solve example5 as specified", async () => {
-      const model = toLpModel(parseInput(example5));
+      const model = toOreModel(parseInput(example5));
       delete global.window;
       const actual = await solveToMine(model);
       // website says 2210736
@@ -156,6 +164,38 @@ describe("14", () => {
       jest.setTimeout(241000);
       const actual = await task1();
       expect(actual).toBe(178154);
+    });
+  });
+
+  describe("solveToFuel()", () => {
+    it("should calculate the expected amount of FUEL for example3", async () => {
+      delete global.window;
+      const model = toFuelModel(parseInput(example3));
+      const actual = await solveToFuel(model);
+      expect(actual).toBe(82892753);
+    });
+
+    it("should calculate the expected amount of FUEL for example4", async () => {
+      delete global.window;
+      const model = toFuelModel(parseInput(example4));
+      const actual = await solveToFuel(model);
+      expect(actual).toBe(5586022);
+    });
+
+    it("should calculate the expected amount of FUEL for example5", async () => {
+      delete global.window;
+      const model = toFuelModel(parseInput(example5));
+      const actual = await solveToFuel(model);
+      expect(actual).toBe(460664);
+    });
+  });
+
+  describe("task2()", () => {
+    it("should compute the desired result", async () => {
+      delete global.window;
+      jest.setTimeout(241000);
+      const actual = await task2();
+      expect(actual).toBe(6226152);
     });
   });
 });
