@@ -74,19 +74,26 @@ export const stateForMove = (
 ): Promise<[State, Response]> => {
   const state = cloneState(oldState);
 
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     let hasStdIn = false;
+    let hasStdOut = false;
 
-    execute(
-      state,
-      async () => {
-        hasStdIn = true;
-        return direction;
-      },
-      async (response: number) => {
-        hasStdIn && resolve([cloneState(state), response]);
-      }
-    );
+    try {
+      await execute(
+        state,
+        async () => {
+          if (hasStdIn) {
+            throw new Error("no duplicate StdIn permitted");
+          }
+
+          hasStdIn = true;
+          return direction;
+        },
+        async (response: number) => {
+          hasStdIn && resolve([cloneState(state), response]);
+        }
+      );
+    } catch (e) {}
   });
 };
 

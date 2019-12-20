@@ -86,13 +86,14 @@ describe("15", () => {
   });
 
   describe("task1()", () => {
-    // it("should not be too high", async () => {
-    //   const value = await task1();
-    //   expect(value).toBeLowerThan(3546494377);
-    // });
-    // it("should not compute the correct value", async () => {
-    //   const value = await task1();
-    //   expect(value).toBe(0);
-    // });
+    it("should not be too high", async () => {
+      const value = await task1();
+      expect(value).toBeLessThan(3546494377);
+    });
+
+    it("should not compute the correct value", async () => {
+      const value = await task1();
+      expect(value).toBe(354);
+    });
   });
 });
