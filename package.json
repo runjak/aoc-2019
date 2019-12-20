@@ -9,6 +9,7 @@
   "private": true,
   "scripts": {
     "13": "NODE_ENV=production ./node_modules/.bin/ts-node src/13.ts",
+    "15": "NODE_ENV=production ./node_modules/.bin/ts-node src/15.ts",
     "test": "jest",
     "start": "ts-node src/index.ts"
   },

@@ -1,9 +1,10 @@
-import zip from "lodash/zip";
+import unzip from "lodash/unzip";
 
 import { Memory } from "./05";
 import { mkState, execute, State } from "./09";
 
 import input from "./15.input.json";
+import { isProduction, withKeypress } from "./process";
 
 export type Position = [number, number];
 
@@ -76,7 +77,6 @@ export const stateForMove = (
 
   return new Promise(async resolve => {
     let hasStdIn = false;
-    let hasStdOut = false;
 
     try {
       await execute(
@@ -154,3 +154,62 @@ export const task1 = async (): Promise<number> => {
 
   return i;
 };
+
+export const completePanel = async (
+  searchState: SearchState
+): Promise<Panel> => {
+  while (nextMoves(searchState).length > 0) {
+    searchState = await searchStep(searchState);
+  }
+
+  return searchState.panel;
+};
+
+export const fromResponse = (response: Response): string => {
+  switch (response) {
+    default:
+    case Response.empty:
+      return " ";
+    case Response.wall:
+      return "#";
+    case Response.oxygen:
+      return "O";
+  }
+};
+
+export const fromPanel = (panel: Panel): string => {
+  // @ts-ignore type known by higher reasoning
+  const [xs, ys]: [Array<number>, Array<number>] = unzip(
+    Object.keys(panel).map(key => JSON.parse(key))
+  );
+
+  const xMin = Math.min(...xs);
+  const yMin = Math.min(...ys);
+  const xMax = Math.max(...xs);
+  const yMax = Math.max(...ys);
+
+  let lines: Array<string> = [];
+  for (let x = xMin; x <= xMax; x++) {
+    let line: Array<string> = [];
+    for (let y = yMin; y <= yMax; y++) {
+      const response = panel[fromPosition([x, y])] || Response.wall;
+      line.push(x === 0 && y === 0 ? "x" : fromResponse(response));
+    }
+
+    lines.push(line.join(""));
+  }
+
+  return lines.join("\n");
+};
+
+if (isProduction()) {
+  withKeypress(() => {});
+
+  (async () => {
+    const panel = await completePanel(mkSearchState(input));
+
+    console.log(fromPanel(panel));
+
+    process.exit(0);
+  })();
+}
