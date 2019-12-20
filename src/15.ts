@@ -202,6 +202,49 @@ export const fromPanel = (panel: Panel): string => {
   return lines.join("\n");
 };
 
+export const floodPanel = (panel: Panel): number => {
+  const entries = Object.entries(panel);
+  let flooded: Set<string> = new Set(
+    entries.filter(([, v]) => v === Response.oxygen).map(([key]) => key)
+  );
+  let toFlood: Set<string> = new Set(
+    entries.filter(([, v]) => v === Response.empty).map(([key]) => key)
+  );
+
+  let i = 0;
+  while (toFlood.size > 0) {
+    let nextFlooded: Set<string> = new Set(flooded);
+    let nextToFlood: Set<string> = new Set();
+
+    for (const key of toFlood) {
+      const neighbours = directions.map(direction =>
+        movePosition(JSON.parse(key), direction)
+      );
+
+      let hasNeighbour = false;
+      for (const neighbour of neighbours) {
+        if (flooded.has(fromPosition(neighbour))) {
+          hasNeighbour = true;
+          break;
+        }
+      }
+
+      hasNeighbour ? nextFlooded.add(key) : nextToFlood.add(key);
+    }
+
+    flooded = nextFlooded;
+    toFlood = nextToFlood;
+    i++;
+  }
+
+  return i;
+};
+
+export const task2 = async (): number => {
+  const panel = await completePanel(mkSearchState(input));
+  return floodPanel(panel);
+};
+
 if (isProduction()) {
   withKeypress(() => {});
 

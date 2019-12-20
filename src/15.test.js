@@ -5,7 +5,8 @@ import {
   stateForMove,
   nextMoves,
   searchStep,
-  task1
+  task1,
+  task2
 } from "./15";
 
 describe("15", () => {
@@ -91,9 +92,16 @@ describe("15", () => {
       expect(value).toBeLessThan(3546494377);
     });
 
-    it("should not compute the correct value", async () => {
+    it("should compute the correct value", async () => {
       const value = await task1();
       expect(value).toBe(354);
+    });
+  });
+
+  describe("task2()", () => {
+    it("should compute the correct value", async () => {
+      const value = await task2();
+      expect(value).toBe(370);
     });
   });
 });
