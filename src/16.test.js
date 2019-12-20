@@ -7,7 +7,8 @@ import {
   fftPhase,
   fftRepeatPhase,
   task1,
-  fftMatrix
+  fftMatrix,
+  fftRealComputation
 } from "./16";
 
 describe("16", () => {
@@ -106,21 +107,21 @@ describe("16", () => {
 
     it("should yield the correct output for example1", () => {
       const expected = numbersFromInput("24176176");
-      const actual = take(fftRepeatPhase(example1, 100), 8);
+      const actual = take(fftRepeatPhase(example1, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example2", () => {
       const expected = numbersFromInput("73745418");
-      const actual = take(fftRepeatPhase(example2, 100), 8);
+      const actual = take(fftRepeatPhase(example2, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example3", () => {
       const expected = numbersFromInput("52432133");
-      const actual = take(fftRepeatPhase(example3, 100), 8);
+      const actual = take(fftRepeatPhase(example3, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);
     });
@@ -129,6 +130,24 @@ describe("16", () => {
   describe("task1()", () => {
     it("should compute the correct value", () => {
       expect(task1()).toBe("52611030");
+    });
+  });
+
+  describe("fftRealComputation()", () => {
+    const example1 = "80871224585914546619083218645595";
+    const example2 = "19617804207202209144916044189917";
+    const example3 = "69317163492948606335995924319873";
+
+    it("should compute the expected output for example1", () => {
+      // expect(fftRealComputation(example1)).toBe("84462026");
+    });
+
+    it("should compute the expected output for example2", () => {
+      // expect(fftRealComputation(example2)).toBe("78725270");
+    });
+
+    it("should compute the expected output for example3", () => {
+      // expect(fftRealComputation(example3)).toBe("53553731");
     });
   });
 });

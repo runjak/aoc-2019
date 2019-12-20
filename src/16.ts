@@ -1,15 +1,14 @@
 import fs from "fs";
-import zipWith from "lodash/zipWith";
-import sum from "lodash/sum";
+import repeat from "lodash/repeat";
 import {
   tensor2d,
   Tensor2D,
+  Tensor1D,
   matMul,
   scalar,
   abs,
   mod
 } from "@tensorflow/tfjs-node";
-import * as tf from "@tensorflow/tfjs-node";
 
 export const getInput = () => String(fs.readFileSync("./src/16.input.txt"));
 
@@ -86,10 +85,7 @@ export const fftPhase = (values: Array<number>): Array<number> => {
   return r.as1D().arraySync();
 };
 
-export const fftRepeatPhase = (
-  values: Array<number>,
-  n: number
-): Array<number> => {
+export const fftRepeatPhase = (values: Array<number>, n: number): Tensor1D => {
   const matrix = fftMatrix(values.length);
   const divisor = scalar(10);
   let tValues = tensor2d(values, [values.length, 1], "int32");
@@ -98,8 +94,25 @@ export const fftRepeatPhase = (
     tValues = mod(abs(matMul(matrix, tValues)), divisor);
   }
 
-  return tValues.as1D().arraySync();
+  return tValues.as1D();
 };
 
 export const task1 = (): string =>
-  take(fftRepeatPhase(numbersFromInput(getInput()), 100), 8).join("");
+  take(fftRepeatPhase(numbersFromInput(getInput()), 100).arraySync(), 8).join(
+    ""
+  );
+
+export const fftRealComputation = (input: string): string => {
+  const values = fftRepeatPhase(numbersFromInput(repeat(input, 10000)), 100);
+  const offset = Number(
+    values
+      .slice(0, 8)
+      .arraySync()
+      .join("")
+  );
+
+  return values
+    .slice(offset, 8)
+    .arraySync()
+    .join("");
+};
