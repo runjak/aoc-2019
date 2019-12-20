@@ -6,7 +6,8 @@ import {
   fftPattern,
   fftPhase,
   fftRepeatPhase,
-  task1
+  task1,
+  fftMatrix
 } from "./16";
 
 describe("16", () => {
@@ -62,6 +63,24 @@ describe("16", () => {
 
     it("should produce the desired pattern for index 2 length 10", () => {
       expect(fftPattern(2, 10)).toEqual([0, 0, 1, 1, 1, 0, 0, 0, -1, -1]);
+    });
+  });
+
+  describe("fftMatrix()", () => {
+    it("should yield the desired matrix", () => {
+      const expected = [
+        [1, 0, -1, 0, 1, 0, -1, 0],
+        [0, 1, 1, 0, 0, -1, -1, 0],
+        [0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+        [0, 0, 0, 0, 0, 1, 1, 1],
+        [0, 0, 0, 0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0, 0, 0, 1]
+      ];
+      const actual = fftMatrix(8).arraySync();
+
+      expect(actual).toEqual(expected);
     });
   });
 

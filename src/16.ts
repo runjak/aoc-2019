@@ -1,6 +1,15 @@
 import fs from "fs";
 import zipWith from "lodash/zipWith";
 import sum from "lodash/sum";
+import {
+  tensor2d,
+  Tensor2D,
+  matMul,
+  scalar,
+  abs,
+  mod
+} from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node";
 
 export const getInput = () => String(fs.readFileSync("./src/16.input.txt"));
 
@@ -61,27 +70,35 @@ export function* replicateEach(
 export const fftPattern = (index: number, length: number): Array<number> =>
   take(drop(replicateEach(fftBasePattern(), index + 1), 1), length);
 
-// This could more beautifully be a matrix multiplication
-export const fftPhase = (values: Array<number>): Array<number> =>
-  values.map((_: number, index: number): number => {
-    const pattern = fftPattern(index, values.length);
+export const fftMatrix = (size: number): Tensor2D => {
+  let rows = [];
+  for (let i = 0; i < size; i++) {
+    rows.push(fftPattern(i, size));
+  }
 
-    return (
-      Math.abs(
-        sum(zipWith(values, pattern, (x: number, y: number): number => x * y))
-      ) % 10
-    );
-  });
+  return tensor2d(rows, [size, size], "int32");
+};
+
+export const fftPhase = (values: Array<number>): Array<number> => {
+  const tValues = tensor2d(values, [values.length, 1], "int32");
+  const r = mod(abs(matMul(fftMatrix(values.length), tValues)), scalar(10));
+
+  return r.as1D().arraySync();
+};
 
 export const fftRepeatPhase = (
   values: Array<number>,
   n: number
 ): Array<number> => {
+  const matrix = fftMatrix(values.length);
+  const divisor = scalar(10);
+  let tValues = tensor2d(values, [values.length, 1], "int32");
+
   for (let i = 0; i < n; i++) {
-    values = fftPhase(values);
+    tValues = mod(abs(matMul(matrix, tValues)), divisor);
   }
 
-  return values;
+  return tValues.as1D().arraySync();
 };
 
 export const task1 = (): string =>
