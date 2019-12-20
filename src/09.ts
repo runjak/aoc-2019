@@ -1,7 +1,7 @@
 import { Memory, parseOp, opLength, ParameterMode, OpCode } from "./05";
 import boostProgram from "./09.input.json";
 
-type State = {
+export type State = {
   memory: Memory;
   pc: number;
   relativeBase: number;
