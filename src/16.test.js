@@ -14,7 +14,7 @@ import {
 describe("16", () => {
   describe("numbersFromInput()", () => {
     it("should parse input as expected", () => {
-      expect(numbersFromInput("12345")).toEqual([1, 2, 3, 4, 5]);
+      expect(numbersFromInput("12345").arraySync()).toEqual([1, 2, 3, 4, 5]);
     });
   });
 
@@ -93,10 +93,10 @@ describe("16", () => {
       const phase3 = numbersFromInput("03415518");
       const phase4 = numbersFromInput("01029498");
 
-      expect(fftPhase(start)).toEqual(phase1);
-      expect(fftPhase(phase1)).toEqual(phase2);
-      expect(fftPhase(phase2)).toEqual(phase3);
-      expect(fftPhase(phase3)).toEqual(phase4);
+      expect(fftPhase(start)).toEqual(phase1.arraySync());
+      expect(fftPhase(phase1)).toEqual(phase2.arraySync());
+      expect(fftPhase(phase2)).toEqual(phase3.arraySync());
+      expect(fftPhase(phase3)).toEqual(phase4.arraySync());
     });
   });
 
@@ -106,21 +106,21 @@ describe("16", () => {
     const example3 = numbersFromInput("69317163492948606335995924319873");
 
     it("should yield the correct output for example1", () => {
-      const expected = numbersFromInput("24176176");
+      const expected = numbersFromInput("24176176").arraySync();
       const actual = take(fftRepeatPhase(example1, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example2", () => {
-      const expected = numbersFromInput("73745418");
+      const expected = numbersFromInput("73745418").arraySync();
       const actual = take(fftRepeatPhase(example2, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example3", () => {
-      const expected = numbersFromInput("52432133");
+      const expected = numbersFromInput("52432133").arraySync();
       const actual = take(fftRepeatPhase(example3, 100).arraySync(), 8);
 
       expect(actual).toEqual(expected);

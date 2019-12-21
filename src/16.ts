@@ -1,5 +1,4 @@
 import fs from "fs";
-import repeat from "lodash/repeat";
 import {
   tensor2d,
   Tensor2D,
@@ -7,13 +6,19 @@ import {
   matMul,
   scalar,
   abs,
-  mod
+  mod,
+  tensor1d,
+  tidy
 } from "@tensorflow/tfjs-node";
+import { isProduction } from "./process";
 
 export const getInput = () => String(fs.readFileSync("./src/16.input.txt"));
 
-export const numbersFromInput = (input: string): Array<number> =>
-  input.split("").map(n => Number(n));
+export const numbersFromInput = (input: string): Tensor1D =>
+  tensor1d(
+    input.split("").map(n => Number(n)),
+    "int32"
+  );
 
 export function* fftBasePattern(): Generator<number, void, unknown> {
   while (true) {
@@ -78,20 +83,34 @@ export const fftMatrix = (size: number): Tensor2D => {
   return tensor2d(rows, [size, size], "int32");
 };
 
-export const fftPhase = (values: Array<number>): Array<number> => {
-  const tValues = tensor2d(values, [values.length, 1], "int32");
-  const r = mod(abs(matMul(fftMatrix(values.length), tValues)), scalar(10));
+export const fftPhase = (values: Tensor1D): Array<number> => {
+  const r = mod(
+    abs(matMul(fftMatrix(values.size), values.as2D(values.size, 1))),
+    scalar(10)
+  );
 
   return r.as1D().arraySync();
 };
 
-export const fftRepeatPhase = (values: Array<number>, n: number): Tensor1D => {
-  const matrix = fftMatrix(values.length);
+export const expm = (matrix: Tensor2D, n: number): Tensor2D => {
+  if (n <= 1) {
+    return matrix;
+  }
+
+  if (n % 2 === 1) {
+    return matMul(matrix, expm(matrix, n - 1));
+  }
+
+  return expm(matMul(matrix, matrix), n / 2);
+};
+
+export const fftRepeatPhase = (values: Tensor1D, n: number): Tensor1D => {
+  const matrix = fftMatrix(values.size);
   const divisor = scalar(10);
-  let tValues = tensor2d(values, [values.length, 1], "int32");
+  let tValues = values.as2D(values.size, 1);
 
   for (let i = 0; i < n; i++) {
-    tValues = mod(abs(matMul(matrix, tValues)), divisor);
+    tValues = tidy(() => mod(abs(matMul(matrix, tValues)), divisor));
   }
 
   return tValues.as1D();
@@ -103,7 +122,7 @@ export const task1 = (): string =>
   );
 
 export const fftRealComputation = (input: string): string => {
-  const values = fftRepeatPhase(numbersFromInput(repeat(input, 10000)), 100);
+  const values = fftRepeatPhase(numbersFromInput(input).tile([10000]), 100);
   const offset = Number(
     values
       .slice(0, 8)
@@ -116,3 +135,11 @@ export const fftRealComputation = (input: string): string => {
     .arraySync()
     .join("");
 };
+
+if (isProduction()) {
+  console.log(
+    "80871224585914546619083218645595 ->",
+    fftRealComputation("80871224585914546619083218645595"),
+    "=== 84462026?"
+  );
+}
