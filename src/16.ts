@@ -48,7 +48,7 @@ export const fftMatrix = (size: number): Tensor2D => {
   return stack(rows) as Tensor2D;
 };
 
-export const fftPhase = (values: Tensor1D): Array<number> => {
+export const fftPhase = (values: Tensor1D): Tensor1D => {
   const ten = scalar(10);
   const mValues = values.as2D(values.size, 1);
 
@@ -66,7 +66,7 @@ export const fftPhase = (values: Tensor1D): Array<number> => {
     xs.push(ys[0]);
   }
 
-  return xs;
+  return tensor1d(xs);
 };
 
 export const expm = (matrix: Tensor2D, n: number): Tensor2D => {

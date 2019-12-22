@@ -62,10 +62,10 @@ describe("16", () => {
       const phase3 = numbersFromInput("03415518");
       const phase4 = numbersFromInput("01029498");
 
-      expect(fftPhase(start)).toEqual(phase1.arraySync());
-      expect(fftPhase(phase1)).toEqual(phase2.arraySync());
-      expect(fftPhase(phase2)).toEqual(phase3.arraySync());
-      expect(fftPhase(phase3)).toEqual(phase4.arraySync());
+      expect(fftPhase(start).arraySync()).toEqual(phase1.arraySync());
+      expect(fftPhase(phase1).arraySync()).toEqual(phase2.arraySync());
+      expect(fftPhase(phase2).arraySync()).toEqual(phase3.arraySync());
+      expect(fftPhase(phase3).arraySync()).toEqual(phase4.arraySync());
     });
   });
 
