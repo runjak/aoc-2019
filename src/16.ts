@@ -49,12 +49,24 @@ export const fftMatrix = (size: number): Tensor2D => {
 };
 
 export const fftPhase = (values: Tensor1D): Array<number> => {
-  const r = mod(
-    abs(matMul(fftMatrix(values.size), values.as2D(values.size, 1))),
-    scalar(10)
-  );
+  const ten = scalar(10);
+  const mValues = values.as2D(values.size, 1);
 
-  return r.as1D().arraySync();
+  let xs: Array<number> = [];
+  for (let i = 0; i < values.size; i++) {
+    const ys = mod(
+      abs(
+        matMul(
+          mkPattern(i + 1, values.size).as2D(1, values.size),
+          mValues
+        ).flatten()
+      ),
+      ten
+    ).arraySync() as [number];
+    xs.push(ys[0]);
+  }
+
+  return xs;
 };
 
 export const expm = (matrix: Tensor2D, n: number): Tensor2D => {
