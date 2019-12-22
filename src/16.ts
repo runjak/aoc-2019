@@ -5,10 +5,7 @@ import {
   Tensor1D,
   matMul,
   scalar,
-  abs,
-  mod,
   tensor1d,
-  tidy,
   concat1d,
   stack
 } from "@tensorflow/tfjs-node";
@@ -97,9 +94,7 @@ export const fftRepeatPhase = (inputs: Tensor1D, n: number): Tensor1D => {
   let values = inputs;
 
   for (let i = 0; i < n; i++) {
-    // tidy(() => {
     values = fftPhase(values);
-    // });
   }
 
   return values;
