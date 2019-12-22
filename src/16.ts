@@ -8,7 +8,9 @@ import {
   abs,
   mod,
   tensor1d,
-  tidy
+  tidy,
+  concat1d,
+  stack
 } from "@tensorflow/tfjs-node";
 import { isProduction } from "./process";
 
@@ -20,67 +22,22 @@ export const numbersFromInput = (input: string): Tensor1D =>
     "int32"
   );
 
-export function* fftBasePattern(): Generator<number, void, unknown> {
-  while (true) {
-    yield 0;
-    yield 1;
-    yield 0;
-    yield -1;
-  }
-}
+export const mkPattern = (n: number, length: number): Tensor1D => {
+  const base = tensor2d([0, 1, 0, -1], [4, 1])
+    .tile([1, n])
+    .flatten();
 
-export function* drop(
-  iterable: Iterable<number>,
-  n: number
-): Generator<number, void, unknown> {
-  let i = 0;
-  for (const x of iterable) {
-    if (i < n) {
-      i++;
-    } else {
-      yield x;
-    }
-  }
-}
-
-export const take = (iterable: Iterable<number>, n: number): Array<number> => {
-  let values: Array<number> = [];
-
-  let i = 1;
-  for (const x of iterable) {
-    values.push(x);
-
-    if (i >= n) {
-      break;
-    } else {
-      i++;
-    }
-  }
-
-  return values;
+  const replication = Math.ceil((length + 1) / base.size);
+  return base.tile([replication]).slice(1, length);
 };
 
-export function* replicateEach(
-  iterable: Iterable<number>,
-  n: number
-): Generator<number, void, unknown> {
-  for (const x of iterable) {
-    for (let i = 0; i < n; i++) {
-      yield x;
-    }
-  }
-}
-
-export const fftPattern = (index: number, length: number): Array<number> =>
-  take(drop(replicateEach(fftBasePattern(), index + 1), 1), length);
-
 export const fftMatrix = (size: number): Tensor2D => {
-  let rows = [];
+  let rows: Array<Tensor1D> = [];
   for (let i = 0; i < size; i++) {
-    rows.push(fftPattern(i, size));
+    rows.push(mkPattern(i + 1, size));
   }
 
-  return tensor2d(rows, [size, size], "int32");
+  return stack(rows) as Tensor2D;
 };
 
 export const fftPhase = (values: Tensor1D): Array<number> => {
@@ -117,9 +74,10 @@ export const fftRepeatPhase = (values: Tensor1D, n: number): Tensor1D => {
 };
 
 export const task1 = (): string =>
-  take(fftRepeatPhase(numbersFromInput(getInput()), 100).arraySync(), 8).join(
-    ""
-  );
+  fftRepeatPhase(numbersFromInput(getInput()), 100)
+    .slice(0, 8)
+    .arraySync()
+    .join("");
 
 export const fftRealComputation = (input: string): string => {
   const values = fftRepeatPhase(numbersFromInput(input).tile([10000]), 100);

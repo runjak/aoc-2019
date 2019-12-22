@@ -1,14 +1,11 @@
 import {
   numbersFromInput,
-  drop,
-  take,
-  replicateEach,
-  fftPattern,
   fftPhase,
   fftRepeatPhase,
   task1,
   fftMatrix,
-  fftRealComputation
+  fftRealComputation,
+  mkPattern
 } from "./16";
 
 describe("16", () => {
@@ -18,52 +15,24 @@ describe("16", () => {
     });
   });
 
-  describe("drop()", () => {
-    it("should drop the first n elements", () => {
-      const expected = [3, 4, 5];
-
-      let actual = [];
-      for (const x of drop([1, 2, 3, 4, 5], 2)) {
-        actual.push(x);
-      }
-
-      expect(actual).toEqual(expected);
-    });
-  });
-
-  describe("take()", () => {
-    it("should take the first n elements", () => {
-      const expected = [1, 2, 3];
-
-      let actual = [];
-      for (const x of take([1, 2, 3, 4, 5], 3)) {
-        actual.push(x);
-      }
-
-      expect(actual).toEqual(expected);
-    });
-  });
-
-  describe("replicateEach()", () => {
-    it("should replicate each element n times", () => {
-      const expected = [2, 2, 2, 3, 3, 3, 5, 5, 5];
-
-      let actual = [];
-      for (const x of replicateEach([2, 3, 5], 3)) {
-        actual.push(x);
-      }
-
-      expect(actual).toEqual(expected);
-    });
-  });
-
-  describe("fftPattern()", () => {
-    it("should produce the desired pattern for index 0 length 4", () => {
-      expect(fftPattern(0, 4)).toEqual([1, 0, -1, 0]);
+  describe("mkPattern()", () => {
+    it("should produce the desired pattern for n=1, length=4", () => {
+      expect(mkPattern(1, 4).arraySync()).toEqual([1, 0, -1, 0]);
     });
 
-    it("should produce the desired pattern for index 2 length 10", () => {
-      expect(fftPattern(2, 10)).toEqual([0, 0, 1, 1, 1, 0, 0, 0, -1, -1]);
+    it("should produce the desired pattern for index=3, length=10", () => {
+      expect(mkPattern(3, 10).arraySync()).toEqual([
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        -1,
+        -1
+      ]);
     });
   });
 
@@ -107,21 +76,27 @@ describe("16", () => {
 
     it("should yield the correct output for example1", () => {
       const expected = numbersFromInput("24176176").arraySync();
-      const actual = take(fftRepeatPhase(example1, 100).arraySync(), 8);
+      const actual = fftRepeatPhase(example1, 100)
+        .slice(0, 8)
+        .arraySync();
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example2", () => {
       const expected = numbersFromInput("73745418").arraySync();
-      const actual = take(fftRepeatPhase(example2, 100).arraySync(), 8);
+      const actual = fftRepeatPhase(example2, 100)
+        .slice(0, 8)
+        .arraySync();
 
       expect(actual).toEqual(expected);
     });
 
     it("should yield the correct output for example3", () => {
       const expected = numbersFromInput("52432133").arraySync();
-      const actual = take(fftRepeatPhase(example3, 100).arraySync(), 8);
+      const actual = fftRepeatPhase(example3, 100)
+        .slice(0, 8)
+        .arraySync();
 
       expect(actual).toEqual(expected);
     });
