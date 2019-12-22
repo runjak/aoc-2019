@@ -22,13 +22,21 @@ export const numbersFromInput = (input: string): Tensor1D =>
     "int32"
   );
 
-export const mkPattern = (n: number, length: number): Tensor1D => {
+export const mkBasePattern = (n: number): Tensor1D => {
   const base = tensor2d([0, 1, 0, -1], [4, 1])
     .tile([1, n])
     .flatten();
 
+  return base.slice(1).concat(base.slice(0, 1));
+};
+
+export const mkPattern = (n: number, length: number): Tensor1D => {
+  const base = mkBasePattern(n);
+
   const replication = Math.ceil((length + 1) / base.size);
-  return base.tile([replication]).slice(1, length);
+  return mkBasePattern(n)
+    .tile([replication])
+    .slice(0, length);
 };
 
 export const fftMatrix = (size: number): Tensor2D => {
