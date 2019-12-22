@@ -78,18 +78,6 @@ export const fftPhase = (inputs: Tensor1D): Tensor1D => {
   return values.abs().mod(10);
 };
 
-export const expm = (matrix: Tensor2D, n: number): Tensor2D => {
-  if (n <= 1) {
-    return matrix;
-  }
-
-  if (n % 2 === 1) {
-    return matMul(matrix, expm(matrix, n - 1));
-  }
-
-  return expm(matMul(matrix, matrix), n / 2);
-};
-
 export const fftRepeatPhase = (inputs: Tensor1D, n: number): Tensor1D => {
   let values = inputs;
 
