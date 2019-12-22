@@ -7,7 +7,8 @@ import {
   scalar,
   tensor1d,
   concat1d,
-  stack
+  stack,
+  tidy
 } from "@tensorflow/tfjs-node";
 import { isProduction } from "./process";
 
@@ -82,7 +83,7 @@ export const fftRepeatPhase = (inputs: Tensor1D, n: number): Tensor1D => {
   let values = inputs;
 
   for (let i = 0; i < n; i++) {
-    values = fftPhase(values);
+    values = tidy(() => fftPhase(values));
   }
 
   return values;
