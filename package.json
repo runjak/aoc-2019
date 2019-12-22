@@ -11,6 +11,7 @@
     "13": "NODE_ENV=production ./node_modules/.bin/ts-node src/13.ts",
     "15": "NODE_ENV=production ./node_modules/.bin/ts-node src/15.ts",
     "16": "NODE_ENV=production NODE_OPTIONS=\"--max_old_space_size=10240\" ./node_modules/.bin/ts-node src/16.ts",
+    "17": "NODE_ENV=production ./node_modules/.bin/ts-node src/17.ts",
     "test": "jest",
     "start": "ts-node src/index.ts"
   },
