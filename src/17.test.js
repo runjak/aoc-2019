@@ -1,4 +1,14 @@
-import { findIntersections, scoreIntersections, task1 } from "./17";
+import {
+  findIntersections,
+  scoreIntersections,
+  task1,
+  uncompressed,
+  a,
+  b,
+  c,
+  main,
+  task2
+} from "./17";
 
 describe("17", () => {
   const example = [
@@ -38,6 +48,25 @@ describe("17", () => {
       const actual = await task1();
 
       expect(actual).toBe(3888);
+    });
+  });
+
+  describe("compression", () => {
+    it("should derive uncompressed from a,b,c and main", () => {
+      expect(
+        main
+          .replace(/A/g, a)
+          .replace(/B/g, b)
+          .replace(/C/g, c)
+      ).toEqual(uncompressed);
+    });
+  });
+
+  describe("task2()", () => {
+    it("should compute the correct values", async () => {
+      const actual = await task2();
+
+      expect(actual).toBe(927809);
     });
   });
 });
