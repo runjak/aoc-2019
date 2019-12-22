@@ -48,25 +48,37 @@ export const fftMatrix = (size: number): Tensor2D => {
   return stack(rows) as Tensor2D;
 };
 
-export const fftPhase = (values: Tensor1D): Tensor1D => {
-  const ten = scalar(10);
-  const mValues = values.as2D(values.size, 1);
+export const fftPhase = (inputs: Tensor1D): Tensor1D => {
+  let values = tensor1d([]);
 
-  let xs: Array<number> = [];
-  for (let i = 0; i < values.size; i++) {
-    const ys = mod(
-      abs(
-        matMul(
-          mkPattern(i + 1, values.size).as2D(1, values.size),
-          mValues
-        ).flatten()
-      ),
-      ten
-    ).arraySync() as [number];
-    xs.push(ys[0]);
+  for (let chunkSize = 1; chunkSize <= inputs.size; chunkSize++) {
+    let negative = false;
+    let chunks = tensor1d([]);
+
+    for (
+      let chunkStart = chunkSize - 1;
+      chunkStart < inputs.size;
+      chunkStart += 2 * chunkSize
+    ) {
+      const overlapsEnd = inputs.size <= chunkStart + chunkSize;
+      const effectiveChunkSize = overlapsEnd
+        ? Math.max(0, inputs.size - chunkStart)
+        : chunkSize;
+
+      const slice = inputs.slice(chunkStart, effectiveChunkSize);
+      const effectiveSlice = negative
+        ? (slice.mul(scalar(-1, "int32")) as Tensor1D)
+        : slice;
+
+      chunks = concat1d([chunks, effectiveSlice]);
+
+      negative = !negative;
+    }
+
+    values = concat1d([values, chunks.sum(undefined, true) as Tensor1D]);
   }
 
-  return tensor1d(xs);
+  return values.abs().mod(10);
 };
 
 export const expm = (matrix: Tensor2D, n: number): Tensor2D => {
@@ -81,16 +93,16 @@ export const expm = (matrix: Tensor2D, n: number): Tensor2D => {
   return expm(matMul(matrix, matrix), n / 2);
 };
 
-export const fftRepeatPhase = (values: Tensor1D, n: number): Tensor1D => {
-  const matrix = fftMatrix(values.size);
-  const divisor = scalar(10);
-  let tValues = values.as2D(values.size, 1);
+export const fftRepeatPhase = (inputs: Tensor1D, n: number): Tensor1D => {
+  let values = inputs;
 
   for (let i = 0; i < n; i++) {
-    tValues = tidy(() => mod(abs(matMul(matrix, tValues)), divisor));
+    // tidy(() => {
+    values = fftPhase(values);
+    // });
   }
 
-  return tValues.as1D();
+  return values;
 };
 
 export const task1 = (): string =>
