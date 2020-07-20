@@ -30,7 +30,7 @@
     "gl-matrix": "^3.1.0",
     "javascript-lp-solver": "^0.4.24",
     "jest": "^24.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "permutated": "^2.0.0",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2"
